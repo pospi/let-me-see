@@ -1,0 +1,37 @@
+{
+  "name": "let-me-see",
+  "version": "0.0.1",
+  "description": "Secure, distributed realtime video chat",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:pospi/let-me-see.git"
+  },
+  "keywords": [
+    "video",
+    "chat",
+    "dapp",
+    "ethereum"
+  ],
+  "author": "pospi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pospi/let-me-see/issues"
+  },
+  "homepage": "https://github.com/pospi/let-me-see",
+  "devDependencies": {
+    "bower": "*",
+    "grunt": "*",
+    "load-grunt-tasks": "*",
+    "time-grunt": "*",
+    "grunt-contrib-clean": "latest",
+    "grunt-msx": "latest",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-less": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-browser-sync": "*"
+  }
+}
