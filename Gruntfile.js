@@ -2,6 +2,11 @@
 
 var BROWSERSYNC_HOST_PROXY = "letmesee.localhost";
 
+var ASSETS_PATH = 'assets/';
+var SOURCE_PATH = 'src/';
+var LIBS_PATH = 'bower_components/';
+var NODE_MODULES = 'node_modules/';
+
 var tasks = {
 	'watchfs' : [ 'watch' ],
 	'default' : [
@@ -20,20 +25,20 @@ var config = {
 	init: false,
 	clean : {
 		vendor: [
-			'assets/vendor.min.js',
-			'assets/vendor.min.js.map',
+			ASSETS_PATH + 'vendor.min.js',
+			ASSETS_PATH + 'vendor.min.js.map',
 		],
 		appjs: [
-			'assets/app.min.js',
-			'assets/app.min.js.map',
+			ASSETS_PATH + 'app.min.js',
+			ASSETS_PATH + 'app.min.js.map',
 		],
 		appcss: [
-			'assets/app.min.css',
-			'assets/app.min.css.map',
+			ASSETS_PATH + 'app.min.css',
+			ASSETS_PATH + 'app.min.css.map',
 		],
 		jsxcache: [
-			'assets/temp/**/*.js',
-			'assets/temp/**/*.jsx',
+			ASSETS_PATH + 'temp/**/*.js',
+			ASSETS_PATH + 'temp/**/*.jsx',
 		],
 	},
 	less : {
@@ -41,14 +46,14 @@ var config = {
 			options: {
 				sourceMap: true,
 				outputSourceFiles: false,
-				sourceMapFilename: 'assets/app.min.css.map',
-				sourceMapRootpath: '/assets/',
+				sourceMapFilename: ASSETS_PATH + 'app.min.css.map',
+				sourceMapRootpath: '/' + ASSETS_PATH,
 				compress: true,
 				cleancss: false,
 			},
 			files: {
 				'assets/app.min.css': [
-					'src/less/app.less',
+					SOURCE_PATH + 'less/app.less',
 				],
 			},
 		},
@@ -57,36 +62,41 @@ var config = {
 		appjs : {
 			files : [{
 				expand: true,
-				cwd: 'src',
+				cwd: SOURCE_PATH,
 				src: "**/*.jsx",
-				dest: "assets/temp",
+				dest: ASSETS_PATH + "temp",
 			}],
 		},
 	},
 	uglify : {
 		vendor: {
 			options: {
-				sourceMap: 'assets/vendor.min.js.map',
+				sourceMap: ASSETS_PATH + 'vendor.min.js.map',
 				sourceMapIncludeSources: false,
 				beautify: true,     // ...for debugging
 				mangle: false
 			},
 			files: {
 				'assets/vendor.min.js': [
-					'bower_components/mithril/mithril.js',
+					LIBS_PATH + 'mithril/mithril.js',
+					NODE_MODULES + 'ethereum.js/dist/ethereum.js',
 				],
 			},
 		},
 		appjs: {
 			options: {
-				sourceMap: 'assets/app.min.js.map',
+				sourceMap: ASSETS_PATH + 'app.min.js.map',
 				sourceMapIncludeSources: false,
 				beautify: true,     // ...for debugging
 				mangle: false,
 			},
 			files: {
 				'assets/app.min.js': [
-					'assets/temp/**/*.jsx',
+					ASSETS_PATH + 'temp/js/ioc-container.jsx',
+					ASSETS_PATH + 'temp/js/globals.jsx',
+					ASSETS_PATH + 'temp/js/_config.jsx',
+					ASSETS_PATH + 'temp/js/init.jsx',
+					ASSETS_PATH + 'temp/**/*.jsx',
 				]
 			}
 		}
@@ -95,9 +105,9 @@ var config = {
 		dev: {
 			bsFiles: {
 				src: [
-					'assets/app.min.css',
-					'assets/vendor.min.js',
-					'assets/app.min.js',
+					ASSETS_PATH + 'app.min.css',
+					ASSETS_PATH + 'vendor.min.js',
+					ASSETS_PATH + 'app.min.js',
 					'index.html',
 				],
 			},
@@ -111,15 +121,15 @@ var config = {
 	},
 	watch : {
 		less: {
-			files: ['src/**/*.less'],
+			files: [SOURCE_PATH + '**/*.less'],
 			tasks: ['less:appcss'],
 		},
 		appjs: {
-			files: ['src/**/*.jsx'],
+			files: [SOURCE_PATH + '**/*.jsx'],
 			tasks: ['clean:jsxcache', 'msx:appjs', 'uglify:appjs'],
 		},
 		vendor : {
-			files : ['bower_components/**/*.js', 'bower_components/**/*.css', 'bower_components/**/*.less'],
+			files : [LIBS_PATH + '**/*.js', LIBS_PATH + '**/*.css', LIBS_PATH + '**/*.less'],
 			tasks: ['less:appcss', 'uglify:vendor'],
 		},
 	}
