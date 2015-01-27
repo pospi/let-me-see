@@ -11,7 +11,17 @@
 		<link rel="stylesheet" type="text/css" href="assets/app.min.css" />
 	</head>
 	<body>
-		<script type="text/javascript" href="assets/vendor.min.js"></script>
-		<script type="text/javascript" href="assets/app.min.js"></script>
+		<!--[if lt IE 9]>
+			<script type="text/javascript" src="bower_components/setImmediate/setimmediate-ie8.js"></script>
+		<![endif]-->
+		<!--[if gte IE 9]><!-->
+			<script>window.setImmediate || document.write('<script src="bower_components/setImmediate/setimmediate.js">\x3C/script>')</script>
+		<!--<![endif]-->
+		<script>window.Promise || document.write('<script src="bower_components/promises/promise.js">\x3C/script>')</script>
+
+		<script type="text/javascript" src="assets/vendor.min.js"></script>
+		<script type="text/javascript" src="assets/app.min.js"></script>
+
+		<div id="let-me-see"></div>
 	</body>
 </html>
