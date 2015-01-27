@@ -33,5 +33,8 @@
     "grunt-contrib-less": "*",
     "grunt-contrib-watch": "*",
     "grunt-browser-sync": "*"
+  },
+  "dependencies": {
+    "ethereum.js": "0.0.7"
   }
 }
