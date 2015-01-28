@@ -36,16 +36,16 @@ console.log('New ident', identity);
 	});
 
 
-	var identity2 = shh.newIdentity();
+	var anonymousSender = shh.newIdentity();
 
 
 	shh.post({
-		"from": identity2,
+		"from": anonymousSender,
 		"to": identity,
 		"topics": [ web3.fromAscii(TEST_TOPIC) ],
 		"payload": [ web3.fromAscii(this.messagePayload()) ],
-		"ttl": 100,
-		"priority": 1000
+		"ttl": 1000,
+		"priority": 10000
 	});
 }
 
