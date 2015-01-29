@@ -9,55 +9,112 @@
 
 (function(ns, globals, m, web3, shh) {
 
-var TEST_TOPIC = 'test whisper';
+var TEST_TOPIC = 'testwhisper';
 
 function Controller()
 {
+	var ctrl = this;
+
 	this.messagePayload = m.prop('test data gooo');
+	this.textHistory = m.prop([]);
+
+
+	var identity = shh.newIdentity();
+
+	identity.then(function(identity) {
+		console.log('New ident', identity, web3.fromAscii(identity));
+	}, function(err) {
+		console.error('Bad ident!', err);
+	}).then(function(identity) {
+		self.topicHandle = shh.watch({
+			"topic": [ web3.fromAscii(TEST_TOPIC) ],
+		});
+		self.directHandle = shh.watch({
+			"topic": [ web3.fromAscii(TEST_TOPIC) ],
+			"to": identity,
+		});
+
+		self.topicHandle.arrived(function(msg) {
+			console.log('New broadcast', msg);
+			onNewMessage.call(ctrl, identity, msg, 'broadcast');
+		});
+		self.directHandle.arrived(function(msg) {
+			console.log('New PM', msg);
+			onNewMessage.call(ctrl, identity, msg, 'direct');
+		});
+	});
+
+	this.identity = identity;
 }
+
+//------[ data event handlers ]-----------------------------------------------------------------------------------------
+
+function onNewMessage(myId, msg, msgtype)
+{
+	m.startComputation();
+	this.textHistory().push([myId, msg, msgtype]);
+	m.endComputation();
+}
+
+//------[ user event handlers ]-----------------------------------------------------------------------------------------
 
 function onSendMessage(e)
 {
+	var self = this;
 	e.preventDefault();
 
-	var identity = shh.newIdentity();
-	if (!shh.haveIdentity(identity)) {
-		console.error('oh gnoes identity fail');
-	}
-
-console.log('New ident', identity);
-
-	this.topicHandle = shh.watch({
-		"filter": [ web3.fromAscii(TEST_TOPIC) ],
-		// "to": identity,
+	this.identity.then(function(identity) {
+		shh.post({
+			"from": identity,
+			"topic": [ web3.fromAscii(TEST_TOPIC) ],
+			"payload": [ web3.fromAscii(self.messagePayload()) ],
+			"ttl": 1000,
+			"priority": 10000
+		});
 	});
-	this.topicHandle.arrived(function(msg) {
-		console.log('New message', msg, msg.from == identity);
-	});
+}
 
+function onSendAnonMessage(e)
+{
+	var self = this;
+	e.preventDefault();
 
 	var anonymousSender = shh.newIdentity();
 
-
-	shh.post({
-		"from": anonymousSender,
-		"to": identity,
-		"topics": [ web3.fromAscii(TEST_TOPIC) ],
-		"payload": [ web3.fromAscii(this.messagePayload()) ],
-		"ttl": 1000,
-		"priority": 10000
+	anonymousSender.then(function(identity) {
+		shh.post({
+			"from": anonymousSender,
+			"to": identity,
+			"topic": [ web3.fromAscii(TEST_TOPIC) ],
+			"payload": [ web3.fromAscii(self.messagePayload()) ],
+			"ttl": 1000,
+			"priority": 10000
+		});
 	});
 }
+
+//------[ view DOM ]----------------------------------------------------------------------------------------------------
 
 ns['Test'] = {
 	controller : Controller,
 
 	view : function(ctrl)
 	{
-		return <form onsubmit={ onSendMessage.bind(ctrl) }>
+		return [
+			<div>
+				{ ctrl.textHistory().map(function(h) {
+					var identity = h[0];
+					var msg = h[1];
+					var msgtype = h[2];
+					return <p class={ "msg-" + msgtype + (msg.from == identity ? ' from-me' : '') }><span class="sender">{ msg.from }:</span> { web3.toAscii(msg.payload) }</p>;
+				}) }
+			</div>,
+			<form>
 				<textarea name="payload" value={ ctrl.messagePayload() } onchange={ m.withAttr('value', ctrl.messagePayload) }></textarea>
-				<input type="submit" />
-			</form>;
+				<input type="submit" value="Send" onclick={ onSendMessage.bind(ctrl) } />
+				<input type="submit" value="Send directly" onclick={ onSendAnonMessage.bind(ctrl) } />
+			</form>
+		];
 	}
 };
 
