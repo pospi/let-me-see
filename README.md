@@ -24,3 +24,21 @@ This project uses the [EditorConfig](http://editorconfig.org/) standard to maint
 
 Developed under an MIT open source license, see the file LICENSE.txt for details.
 
+
+
+
+## TODO
+
+- Designs and y'know, basic video chat implementation
+- Work out how to get known contacts handshaking in the first place (assume this will be where the contracts come in)
+- Persistent recording storage:
+	- Configurable transfer mode:
+		- In-stream
+		  (while broadcasting via whisper.. halve bandwidth or ask recipient to handle storing)
+		- Low-quality post-broadcast
+		  (as sent)
+		- Configurable-quality post-broadcast
+		  (generated from max quality version cached on device. May need an app for this, browser's mostly only going to allow us in-memory storage)
+	- Easily pluggable storage networks:
+		- Storj
+		- Swarm (when ready)
