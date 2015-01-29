@@ -35,6 +35,6 @@
     "grunt-browser-sync": "*"
   },
   "dependencies": {
-    "ethereum.js": "0.0.7"
+    "ethereum.js": "0.0.10"
   }
 }
