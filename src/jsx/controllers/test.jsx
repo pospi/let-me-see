@@ -18,28 +18,40 @@ function Controller()
 	this.messagePayload = m.prop('test data gooo');
 	this.textHistory = m.prop([]);
 
+	var topicHandle, directHandle;
 
+	// identify thyself randomly
 	var identity = shh.newIdentity();
 
-	identity.then(function(identity) {
-		console.log('New ident', identity, web3.fromAscii(identity));
-	}, function(err) {
-		console.error('Bad ident!', err);
-	}).then(function(identity) {
-		self.topicHandle = shh.watch({
-			"topic": [ web3.fromAscii(TEST_TOPIC) ],
-		});
-		self.directHandle = shh.watch({
-			"topic": [ web3.fromAscii(TEST_TOPIC) ],
-			"to": identity,
-		});
+	console.log('New ident', identity);
 
-		self.topicHandle.arrived(function(msg) {
-			console.log('New broadcast', msg);
-			onNewMessage.call(ctrl, identity, msg, 'broadcast');
+	// open message channels
+	topicHandle = shh.watch({
+		"topic": [ web3.fromAscii(TEST_TOPIC) ],
+	});
+	directHandle = shh.watch({
+		"topic": [ web3.fromAscii(TEST_TOPIC) ],
+		"to": identity,
+	});
+
+	// watch for new messages
+	topicHandle.arrived(function(msg) {
+		console.log('New broadcast', msg);
+		onNewMessage.call(ctrl, identity, msg, 'broadcast');
+	});
+	directHandle.arrived(function(msg) {
+		console.log('New PM', msg);
+		onNewMessage.call(ctrl, identity, msg, 'direct');
+	});
+
+	// read in any existing messages
+	topicHandle.messages(function(msgs) {
+		msgs.map(function(msg) {
+			onNewMessage.call(ctrl, identity, msg, 'direct');
 		});
-		self.directHandle.arrived(function(msg) {
-			console.log('New PM', msg);
+	});
+	directHandle.messages(function(msgs) {
+		msgs.map(function(msg) {
 			onNewMessage.call(ctrl, identity, msg, 'direct');
 		});
 	});
@@ -63,14 +75,12 @@ function onSendMessage(e)
 	var self = this;
 	e.preventDefault();
 
-	this.identity.then(function(identity) {
-		shh.post({
-			"from": identity,
-			"topic": [ web3.fromAscii(TEST_TOPIC) ],
-			"payload": [ web3.fromAscii(self.messagePayload()) ],
-			"ttl": 1000,
-			"priority": 10000
-		});
+	shh.post({
+		"from": this.identity,
+		"topic": [ web3.fromAscii(TEST_TOPIC) ],
+		"payload": [ web3.fromAscii(self.messagePayload()) ],
+		"ttl": 1000,
+		"priority": 10000
 	});
 }
 
@@ -81,15 +91,13 @@ function onSendAnonMessage(e)
 
 	var anonymousSender = shh.newIdentity();
 
-	anonymousSender.then(function(identity) {
-		shh.post({
-			"from": anonymousSender,
-			"to": identity,
-			"topic": [ web3.fromAscii(TEST_TOPIC) ],
-			"payload": [ web3.fromAscii(self.messagePayload()) ],
-			"ttl": 1000,
-			"priority": 10000
-		});
+	shh.post({
+		"from": anonymousSender,
+		"to": this.identity,
+		"topic": [ web3.fromAscii(TEST_TOPIC) ],
+		"payload": [ web3.fromAscii(self.messagePayload()) ],
+		"ttl": 1000,
+		"priority": 10000
 	});
 }
 
