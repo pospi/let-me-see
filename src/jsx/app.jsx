@@ -7,19 +7,22 @@
  * @since	2015-01-26
  */
 
-(function(ns, globals, m) {
+(function(ui, globals, m) {
 
 function Controller()
 {
-	this.testCtrl = new ns['Test'].controller();
+	this.videoCtrl = new ui.VideoPanel.controller();	// :TODO: check browser support and switch controllers
+	this.testCtrl = new ui.Test.controller();
 }
 
-ns['App'] = {
+ui.App = {
 	controller : Controller,
 
 	view : function(ctrl)
 	{
-		return ns['Test'].view(ctrl.testCtrl);
+		return [
+			ui.Test.view(ctrl.testCtrl),
+		];
 	}
 };
 
