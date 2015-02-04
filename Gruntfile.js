@@ -78,6 +78,7 @@ var config = {
 			},
 			files: {
 				'assets/vendor.min.js': [
+					SOURCE_PATH + 'bignumber.js',
 					LIBS_PATH + 'mithril/mithril.js',
 					NODE_MODULES + 'ethereum.js/dist/ethereum.js',
 				],
