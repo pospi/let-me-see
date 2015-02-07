@@ -20,9 +20,11 @@ ui.App = {
 
 	view : function(ctrl)
 	{
-		return [
-			ui.Test.view(ctrl.testCtrl),
-		];
+console.log('base view');
+		return <div>
+			{ ui.VideoPanel.view(ctrl.videoCtrl) }
+			{ ui.Test.view(ctrl.testCtrl) }
+		</div>;
 	}
 };
 
