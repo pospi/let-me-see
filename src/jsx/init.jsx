@@ -18,7 +18,10 @@
 	} else if (config.force_websocket_uri) {
 		web3.setProvider(new web3.providers.WebSocketProvider(config.force_websocket_uri));
 	} else {
-		web3.setProvider(new web3.providers.AutoProvider());
+		web3.setProvider(new web3.providers.AutoProvider({
+			httprpc : config.force_http_uri || null,
+			websockets : config.force_websocket_uri || null
+		}));
 	}
 
 	// Boot the application
